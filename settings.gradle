@@ -1,0 +1,11 @@
+// This is a configuration file used to determine all the projects prior to
+// building them.
+
+// Explicitly load all the SDK samples using their full path.
+include 'video360'
+
+// Android Studio doesn't preserve nested modules in its Project View. To create
+// a cleaner layout, we reorganize and rename the modules loaded above.
+Set moduleList = new HashSet()  // Modules to display in the Project View.
+
+rootProject.children.addAll(moduleList)
