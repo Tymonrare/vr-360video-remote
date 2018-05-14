@@ -12,5 +12,5 @@ Command format (arguments separated by spaces):
 
 ## Linux command
 
-Launch: `echo "file:///storage/emulated/0/Movies/testRoom_Mono.mp4" | socat - UDP-DATAGRAM:192.168.0.255:11111,broadcast`
-Set time: `echo "file:///storage/emulated/0/Movies/testRoom_Mono.mp4 123 0 0 0" | socat - UDP-DATAGRAM:192.168.0.255:11111,broadcast`
+- Launch: `echo "file:///storage/emulated/0/Movies/testRoom_Mono.mp4" | socat - UDP-DATAGRAM:192.168.0.255:11111,broadcast`
+- Set time: `echo "file:///storage/emulated/0/Movies/testRoom_Mono.mp4 123 0 0 0" | socat - UDP-DATAGRAM:192.168.0.255:11111,broadcast`
