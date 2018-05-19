@@ -74,6 +74,8 @@ public class VrVideoActivity extends GvrActivity {
 
   private Uri videoUri;
   public final float[] additionalTargetOrientation = {0,0,0}, additionalCurrentOrientation = {0,0,0};
+
+  private boolean allowIntents = true;
   /**
    * Configures the VR system.
    *
@@ -129,6 +131,7 @@ public class VrVideoActivity extends GvrActivity {
     // controller.start() is called in onResume().
 
     checkPermissionAndInitialize();
+    allowIntents = true;
   }
 
   /**
@@ -157,18 +160,24 @@ public class VrVideoActivity extends GvrActivity {
         intent.setData(uri); //means that one was from udp
         setIntent(intent);
         recreate();
+        allowIntents = false;
+
         //for new request we don't need to set another data
         return;
       }
 
+      if(data.length < 1) return;
+
       //---
       //set time if it not correct
-      int targetMs = Integer.parseInt(data[1]);
-      int currentMs = mediaLoader.mediaPlayer.getCurrentPosition();
+      int maxMs = mediaLoader.mediaPlayer.getDuration();
+      int targetMs = Integer.parseInt(data[1])%maxMs;
+      int currentMs = mediaLoader.mediaPlayer.getCurrentPosition()%maxMs;
 
       //let little async
       if(Math.abs(targetMs - currentMs) > 100){
-        mediaLoader.mediaPlayer.seekTo(targetMs);
+        Log.d("media", "Sync track: current ms " + currentMs + " target ms " + targetMs);
+        //mediaLoader.mediaPlayer.seekTo(targetMs);
       }
 
       //---
@@ -182,6 +191,8 @@ public class VrVideoActivity extends GvrActivity {
     else{ //just usual behavior
       setIntent(intent);
       recreate();
+      allowIntents = false;
+
     }
 
   }
@@ -196,7 +207,9 @@ public class VrVideoActivity extends GvrActivity {
       // Get extra data included in the Intent
       String message = intent.getStringExtra("message");
       Log.d("receiver", "Got message: " + message);
-      onNewIntent(intent);
+      if(allowIntents) {
+        onNewIntent(intent);
+      }
     }
   };
 
@@ -317,7 +330,7 @@ public class VrVideoActivity extends GvrActivity {
     @Override
     public void onDrawEye(Eye eye) {
 
-      LinearInterpolate(additionalCurrentOrientation, additionalTargetOrientation, 0.1f, additionalCurrentOrientation);
+      LinearInterpolate(additionalCurrentOrientation, additionalTargetOrientation, 0.2f, additionalCurrentOrientation);
 
       Matrix.multiplyMM(
           viewProjectionMatrix, 0, eye.getPerspective(Z_NEAR, Z_FAR), 0, eye.getEyeView(), 0);
